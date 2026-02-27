@@ -1,0 +1,54 @@
+# ProcuraShield — Pre-commit хуки
+# Установка: pip install pre-commit && pre-commit install
+
+repos:
+  # Общие хуки
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: no-commit-to-branch
+        args: ['--branch', 'main', '--branch', 'production']
+
+  # Python — линтинг
+  - repo: https://github.com/astral-sh/ruff
+    rev: v0.1.13
+    hooks:
+      - id: ruff
+        args: ['--fix']
+      - id: ruff-format
+
+  # Python — типы
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - types-redis
+          - types-requests
+        args: ['--ignore-missing-imports']
+        files: ^backend/
+
+  # Security — поиск секретов
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+
+  # Solidity — форматирование
+  - repo: local
+    hooks:
+      - id: solhint
+        name: Solidity Linter
+        entry: npx solhint
+        language: node
+        files: \.sol$
+        args: ['--config', '.solhint.json']

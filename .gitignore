@@ -1,0 +1,73 @@
+# ProcuraShield — файлы игнорирования
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# Node.js
+node_modules/
+.next/
+out/
+.vercel
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Docker
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# Database
+*.sqlite3
+*.db
+
+# Secrets
+*.pem
+*.key
+*.crt
+*.p12
+
+# IPFS
+.ipfs/
+
+# Blockchain
+contracts/artifacts/
+contracts/cache/
+contracts/deployed/
+
+# Coverage
+htmlcov/
+.coverage
+coverage.xml
+
+# Pytest
+.pytest_cache/
+
+# MyPy
+.mypy_cache/
+
+# Locust
+locust_report*.html

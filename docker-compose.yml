@@ -1,0 +1,206 @@
+# ProcuraShield — Docker Compose (полный стек)
+version: '3.9'
+
+services:
+  # ===== BACKEND (FastAPI) =====
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: procurashield-backend
+    ports:
+      - "8100:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+      - model_cache:/app/models/cache
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+  # ===== CELERY WORKER =====
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: procurashield-celery-worker
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+      - model_cache:/app/models/cache
+    depends_on:
+      - backend
+      - redis
+    command: celery -A app.workers.celery_app worker --loglevel=info --concurrency=4
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+  # ===== CELERY BEAT (periodic tasks) =====
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: procurashield-celery-beat
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - celery-worker
+    command: celery -A app.workers.celery_app beat --loglevel=info
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+  # ===== FRONTEND (Next.js) =====
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: procurashield-frontend
+    ports:
+      - "3100:3000"
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+  # ===== PostgreSQL =====
+  db:
+    image: timescale/timescaledb:latest-pg15
+    container_name: procurashield-db
+    ports:
+      - "5532:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-procurashield}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-procurashield_db_pass_2024}
+      POSTGRES_DB: ${POSTGRES_DB:-procurashield}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U procurashield"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+  # ===== Redis =====
+  redis:
+    image: redis:7-alpine
+    container_name: procurashield-redis
+    ports:
+      - "6479:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+  # ===== Ganache (Ethereum local) =====
+  ganache:
+    image: trufflesuite/ganache:latest
+    container_name: procurashield-ganache
+    ports:
+      - "8645:8545"
+    command: >
+      --mnemonic "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat"
+      --networkId 1337
+      --chainId 1337
+      --accounts 10
+      --defaultBalanceEther 100
+      --gasLimit 10000000
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+  # ===== IPFS =====
+  ipfs:
+    image: ipfs/kubo:latest
+    container_name: procurashield-ipfs
+    ports:
+      - "4101:4001"
+      - "5101:5001"
+      - "8180:8080"
+    volumes:
+      - ipfs_data:/data/ipfs
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+  # ===== Nginx (Reverse Proxy) =====
+  nginx:
+    image: nginx:alpine
+    container_name: procurashield-nginx
+    ports:
+      - "180:80"
+      - "543:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+  # ===== Prometheus =====
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: procurashield-prometheus
+    ports:
+      - "9190:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+  # ===== Grafana =====
+  grafana:
+    image: grafana/grafana:latest
+    container_name: procurashield-grafana
+    ports:
+      - "3101:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - procurashield-net
+
+volumes:
+  postgres_data:
+  redis_data:
+  ipfs_data:
+  model_cache:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  procurashield-net:
+    driver: bridge

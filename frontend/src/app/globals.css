@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 248, 250, 252;
+  --background-end-rgb: 241, 245, 249;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 15, 23, 42;
+    --background-end-rgb: 30, 41, 59;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--background-start-rgb)),
+    rgb(var(--background-end-rgb))
+  );
+}
+
+/* Кастомный скроллбар */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #64748b;
+  border-radius: 3px;
+}
+
+/* Risk level badges */
+.risk-green { @apply bg-green-100 text-green-800 border-green-300; }
+.risk-yellow { @apply bg-yellow-100 text-yellow-800 border-yellow-300; }
+.risk-orange { @apply bg-orange-100 text-orange-800 border-orange-300; }
+.risk-red { @apply bg-red-100 text-red-800 border-red-300; }
+
+/* Анимация для графа */
+.graph-container {
+  height: 600px;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+}
+
+/* Карта */
+.leaflet-container {
+  height: 400px;
+  width: 100%;
+  border-radius: 0.5rem;
+}
