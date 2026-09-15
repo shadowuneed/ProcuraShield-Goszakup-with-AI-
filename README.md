@@ -4,6 +4,83 @@
 
 **ProcuraShield** — это AI-powered платформа для автоматического выявления коррупции, картельных сговоров и манипуляций в государственных закупках. Платформа использует NLP, граф-нейронные сети, блокчейн и поведенческий анализ для обеспечения прозрачности и честной конкуренции.
 
+
+<div align="center">
+
+# 🛡️ ProcuraShield
+
+### Интеллектуальная антикоррупционная платформа для государственных закупок
+
+**AI + Graph Neural Networks + Blockchain**
+
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Solidity](https://img.shields.io/badge/Solidity-0.8-363636?style=for-the-badge&logo=solidity&logoColor=white)](https://soliditylang.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+[![Stars](https://img.shields.io/github/stars/shadowuneed/ProcuraShield-Goszakup-with-AI-?style=social)](https://github.com/shadowuneed/ProcuraShield-Goszakup-with-AI-/stargazers)
+[![Forks](https://img.shields.io/github/forks/shadowuneed/ProcuraShield-Goszakup-with-AI-?style=social)](https://github.com/shadowuneed/ProcuraShield-Goszakup-with-AI-/network/members)
+
+</div>
+
+---
+
+## 🎯 О проекте
+
+**ProcuraShield** — AI-powered платформа для автоматического выявления коррупции, картельных сговоров и манипуляций в государственных закупках.
+
+Платформа объединяет:
+- **NLP** — анализ технических спецификаций на «заточку» под конкретного поставщика
+- **Graph Neural Networks** — выявление скрытых аффилированностей и картелей
+- **Risk Scoring** — многофакторная оценка риска каждой закупки (0–100)
+- **Blockchain** — неизменяемый аудит доказательств (Ethereum + IPFS)
+- **AML-анализ** — детектирование отмывания денег через госзакупки
+
+> Цель: сделать государственные закупки прозрачными, конкурентными и защищёнными от манипуляций.
+
+---
+
+## ✨ Ключевые возможности
+
+| Модуль | Что делает |
+|--------|------------|
+| 🔍 **AI-анализ тендеров** | Автоматически находит дискриминационные требования в ТЗ |
+| 📊 **Risk Scoring** | Выдаёт оценку риска 0–100 с объяснением |
+| 🕸️ **Граф связей** | GNN выявляет аффилированность и картельные схемы |
+| ⛓️ **Блокчейн-аудит** | Хеширование документов в Ethereum + IPFS |
+| 💰 **AML-детектор** | Находит подозрительные финансовые потоки |
+| 🔔 **Real-time алерты** | Мгновенные уведомления о высокорисковых тендерах |
+| 📝 **Автожалоба** | Формирование жалобы в ФАС / прокуратуру одной кнопкой |
+| 🕵️ **Whistleblower Portal** | Анонимный портал для информаторов |
+
+---
+
+## 🏗️ Архитектура
+
+```text
+┌─────────────────────────────────────────────────────────────────┐
+│                    FRONTEND (Next.js 14 + TypeScript)           │
+│     Dashboard  │  Анализ тендера  │  Граф связей  │  Portal     │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │ REST / WebSocket
+┌──────────────────────────────▼──────────────────────────────────┐
+│                    API GATEWAY (FastAPI)                        │
+│         Auth │ Rate Limiting │ CORS │ Validation                │
+└───┬──────────┬──────────┬──────────┬───────────┬────────────────┘
+    │          │          │          │           │
+┌───▼───┐ ┌───▼───┐ ┌───▼───┐ ┌───▼───┐  ┌───▼────────┐
+│ NLP   │ │ Graph │ │ Risk  │ │ AML   │  │ Blockchain │
+│Engine │ │Analysr│ │Scorer │ │Detect │  │   Layer    │
+└───┬───┘ └───┬───┘ └───┬───┘ └───┬───┘  └───┬────────┘
+    │         │         │         │           │
+┌───▼─────────▼─────────▼─────────▼───┐  ┌───▼────────┐
+│  PostgreSQL + Redis + TimescaleDB   │  │ Ethereum   │
+│  Celery + Kafka                     │  │ IPFS       │
+└─────────────────────────────────────┘  └────────────┘
+
 ### Ключевые возможности
 
 - 🔍 **AI-анализ тендеров** — автоматическое выявление "заточки под поставщика" в технических спецификациях
